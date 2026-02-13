@@ -74,8 +74,6 @@
 
 <div id="response"></div>
 
-<!-- Hidden YouTube Player Container -->
-<div id="player" style="display:none;"></div>
 
 <script>
   // ===============================
@@ -126,28 +124,13 @@
   });
 
   // ===============================
-  // YOUTUBE IFRAME API
+  // ADDING MUSIC
   // ===============================
+  <audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg" />
+  </audio>
 
-  let player;
-
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      height: '0',
-      width: '0',
-      videoId: 'VIDEO_ID_HERE',
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        loop: 1,
-        playlist: 'VIDEO_ID_HERE'
-      }
-    });
-  }
-
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.body.appendChild(tag);
+  
   // ===============================
   // CONFETTI FUNCTION
   // ===============================
@@ -184,9 +167,7 @@
 
     fireConfetti();
 
-    if (player) {
-      player.playVideo();
-    }
+    music.play();
 
   });
 
