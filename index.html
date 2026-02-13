@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Will You Be My Valentine?</title>
+  
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -70,29 +74,122 @@
 
 <div id="response"></div>
 
+<!-- Hidden YouTube Player Container -->
+<div id="player" style="display:none;"></div>
+
 <script>
+  // ===============================
+  // RUN-AWAY PHYSICS
+  // ===============================
+
   const noBtn = document.getElementById("no");
   const yesBtn = document.getElementById("yes");
+  const container = document.querySelector(".buttons");
   const response = document.getElementById("response");
 
-  noBtn.addEventListener("mouseover", () => {
-    const container = document.querySelector(".buttons");
-    const maxX = container.clientWidth - noBtn.clientWidth;
-    const maxY = container.clientHeight - noBtn.clientHeight;
+  let posX = 240;
+  let posY = 100;
+  let speed = 3;
+  const activationRadius = 150;
 
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
+  document.addEventListener("mousemove", (e) => {
 
-    noBtn.style.left = randomX + "px";
-    noBtn.style.top = randomY + "px";
+    const rect = noBtn.getBoundingClientRect();
+
+    const btnCenterX = rect.left + rect.width / 2;
+    const btnCenterY = rect.top + rect.height / 2;
+
+    const dx = btnCenterX - e.clientX;
+    const dy = btnCenterY - e.clientY;
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < activationRadius) {
+
+      const normX = dx / distance;
+      const normY = dy / distance;
+
+      posX += normX * speed * 8;
+      posY += normY * speed * 8;
+
+      const maxX = container.clientWidth - noBtn.clientWidth;
+      const maxY = container.clientHeight - noBtn.clientHeight;
+
+      posX = Math.max(0, Math.min(posX, maxX));
+      posY = Math.max(0, Math.min(posY, maxY));
+
+      noBtn.style.left = posX + "px";
+      noBtn.style.top = posY + "px";
+
+      speed += 0.02; // Escalating difficulty
+    }
   });
+
+  // ===============================
+  // YOUTUBE IFRAME API
+  // ===============================
+
+  let player;
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '0',
+      width: '0',
+      videoId: 'VIDEO_ID_HERE',
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        loop: 1,
+        playlist: 'VIDEO_ID_HERE'
+      }
+    });
+  }
+
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+  // ===============================
+  // CONFETTI FUNCTION
+  // ===============================
+
+  function fireConfetti() {
+    const duration = 2000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      confetti({
+        particleCount: 5,
+        spread: 60,
+        origin: { x: Math.random(), y: Math.random() - 0.2 }
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+  // ===============================
+  // YES BUTTON EVENT
+  // ===============================
 
   yesBtn.addEventListener("click", () => {
-    document.querySelector(".buttons").style.display = "none";
-    response.innerHTML = "YAY!!! 💕 You just made me the happiest person alive!";
-    response.classList.add("success");
-  });
-</script>
 
+    document.querySelector(".buttons").style.display = "none";
+
+    response.innerHTML =
+      "YAY!!! 💕 You just made me the happiest person alive!";
+
+    document.body.style.background =
+      "linear-gradient(to bottom right, #ff4d6d, #ff85a1)";
+
+    fireConfetti();
+
+    if (player) {
+      player.playVideo();
+    }
+
+  });
+
+</script>
 </body>
 </html>
