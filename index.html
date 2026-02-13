@@ -74,6 +74,12 @@
 
 <div id="response"></div>
 
+// ===============================
+// ADDING MUSIC
+// ===============================
+<audio id="music" loop>
+<source src="music.mp3" type="audio/mpeg" />
+</audio>
 
 <script>
   // ===============================
@@ -123,13 +129,6 @@
     }
   });
 
-  // ===============================
-  // ADDING MUSIC
-  // ===============================
-  <audio id="music" loop>
-  <source src="music.mp3" type="audio/mpeg" />
-  </audio>
-
   
   // ===============================
   // CONFETTI FUNCTION
@@ -154,6 +153,8 @@
   // ===============================
   // YES BUTTON EVENT
   // ===============================
+
+  const music = document.getElementById("music");
 
   yesBtn.addEventListener("click", () => {
 
